@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>APTDSC ERP</title>
+
+<style>
+
+body{font-family:Arial;margin:0;background:#f4f4f4;}
+
+.topmenu{
+background:#4c74b9;
+padding:10px;
+color:white;
+display:flex;
+gap:30px;
+font-weight:bold;
+}
+
+.container{padding:20px;}
+
+.flexbox{display:flex;justify-content:space-between;}
+
+.left-panel{width:45%;}
+
+.right-panel{
+width:45%;
+border:2px solid gray;
+height:250px;
+background:white;
+}
+
+.orange-box{
+background:#ea7b2c;
+color:white;
+padding:10px;
+margin-bottom:10px;
+}
+
+.yellow-box{
+background:#ffc000;
+padding:10px;
+margin-bottom:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#6ea94d;
+color:white;
+padding:10px;
+}
+
+td{
+padding:8px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topmenu">
+<div>Home</div>
+<div>File</div>
+<div>Tools</div>
+<div>Edit</div>
+<div>Save</div>
+<div>Actions</div>
+<div>Help</div>
+</div>
+
+<div class="container">
+
+<div class="flexbox">
+
+<div class="left-panel">
+
+{% if user %}
+<div class="orange-box">
+Log In time {{ login_time }}
+<br>
+<a href="/logout" style="color:white;">Log out</a>
+</div>
+{% else %}
+<form action="/login" method="POST">
+<input name="name" placeholder="Incharge Name" required>
+<button type="submit">Login</button>
+</form>
+{% endif %}
+
+<div>
+<b>Date</b> {{ today }}
+</div>
+
+<div class="yellow-box">
+<b>Incharge name</b> {{ user }}
+</div>
+
+</div>
+
+<div class="right-panel">
+<img src="{{ url_for('video') }}" width="100%" height="100%">
+</div>
+
+</div>
+
+<table>
+
+<tr>
+<th>S.No</th>
+<th>Part name</th>
+<th>Batch Number</th>
+<th>Barcode</th>
+<th>Date</th>
+</tr>
+
+<tbody id="partsTable"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+function loadParts(){
+
+fetch("/api/parts")
+.then(res=>res.json())
+.then(data=>{
+
+let table=document.getElementById("partsTable");
+
+table.innerHTML="";
+
+data.forEach((p,index)=>{
+
+table.innerHTML+=`
+<tr>
+<td>${index+1}</td>
+<td>${p.name}</td>
+<td>${p.batch}</td>
+<td><img src="/${p.barcode}" width="120"></td>
+<td>${p.date}</td>
+</tr>
+`;
+
+});
+
+});
+
+}
+
+setInterval(loadParts,2000);
+
+loadParts();
+
+</script>
+
+</body>
+</html>
